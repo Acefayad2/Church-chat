@@ -30,15 +30,20 @@
       top: 0;
       left: 0;
       width: 100vw;
-      height: 100vh;
+      height: 88vh; /* leave space for chat */
       z-index: 1;
       background: #000;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     /* ✅ Chat bar at the bottom */
     #chat-container {
       position: fixed;
-      bottom: 10px;
+      bottom: 0;
       left: 50%;
       transform: translateX(-50%);
       width: 80vw;
