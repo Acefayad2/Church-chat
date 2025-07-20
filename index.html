@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Church Slides + Live Chat</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      overflow: hidden;
+    }
+
+    iframe {
+      border: none;
+    }
+
+    /* ✅ Fullscreen slides */
+    #slides {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    /* ✅ Chat bar at the bottom */
+    #chat-container {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80vw;
+      height: 12vh;
+      z-index: 3;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      cursor: move;
+      pointer-events: none;
+    }
+
+    #chat-container iframe {
+      width: 100%;
+      height: 100%;
+      pointer-events: auto;
+    }
+
+    #player {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      display: none;
+    }
+
+    #toggleBtn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 4;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <button id="toggleBtn">Show Video</button>
+
+  <!-- ✅ Fullscreen Slides (with correct background rendering) -->
+  <iframe
+    id="slides"
+    src="https://docs.google.com/presentation/d/1j3NOS-Ca4WdE6MAnsZcjCKglmmr_sKvafLqneSpZ51c/embed?start=true&loop=true&delayms=10000"
+    allowfullscreen
+  ></iframe>
+
+  <!-- ✅ Minimized Floating Chat -->
+  <div id="chat-container">
+    <iframe
+      src="https://chat.restream.io/embed?token=9b5dccab-d81c-457a-8801-47adc7673892"
+      allowfullscreen
+    ></iframe>
+  </div>
+
+  <!-- ✅ Optional Video Feed -->
+  <div id="player">
+    <iframe
+      src="https://player.restream.io/?token=fd8a057a677c4e83897fca7c7a15fc8f"
+      allow="autoplay"
+      allowfullscreen
+      style="width:100%; height:100%;"
+    ></iframe>
+  </div>
+
+  <script>
+    const toggleBtn = document.getElementById('toggleBtn');
+    const slides = document.getElementById('slides');
+    const player = document.getElementById('player');
+    const chatContainer = document.getElementById('chat-container');
+
+    toggleBtn.onclick = () => {
+      const showingVideo = player.style.display === 'block';
+      player.style.display = showingVideo ? 'none' : 'block';
+      slides.style.zIndex = showingVideo ? 1 : 0;
+      toggleBtn.textContent = showingVideo ? 'Show Video' : 'Show Slides';
+    };
+
+    // Chat drag support
+    let isDragging = false, offsetX = 0, offsetY = 0;
+
+    chatContainer.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      offsetX = e.clientX - chatContainer.offsetLeft;
+      offsetY = e.clientY - chatContainer.offsetTop;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        chatContainer.style.left = `${e.clientX - offsetX}px`;
+        chatContainer.style.top = `${e.clientY - offsetY}px`;
+      }
+    });
+
+    document.addEventListener('mouseup', () => isDragging = false);
+
+    chatContainer.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      const touch = e.touches[0];
+      offsetX = touch.clientX - chatContainer.offsetLeft;
+      offsetY = touch.clientY - chatContainer.offsetTop;
+    });
+
+    chatContainer.addEventListener('touchmove', (e) => {
+      if (isDragging) {
+        const touch = e.touches[0];
+        chatContainer.style.left = `${touch.clientX - offsetX}px`;
+        chatContainer.style.top = `${touch.clientY - offsetY}px`;
+      }
+    });
+
+    chatContainer.addEventListener('touchend', () => isDragging = false);
+  </script>
+</body>
+</html>
