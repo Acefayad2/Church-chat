@@ -15,6 +15,15 @@
       border: none;
     }
 
+    /* Improve text rendering for slides */
+    #slides {
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
     /* ✅ Fullscreen slides */
     #slides {
       position: fixed;
@@ -23,6 +32,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
+      background: #000;
     }
 
     /* ✅ Chat bar at the bottom */
