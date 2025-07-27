@@ -108,9 +108,10 @@
   <!-- ✅ Fullscreen Slides (with correct background rendering) -->
   <iframe
     id="slides"
-    src="https://docs.google.com/presentation/d/1N69UQbYEOPbzyoQVQ5jyaVvfxYUXg4jATJ3buebfL08/preview"
+    src="https://docs.google.com/presentation/d/e/1N69UQbYEOPbzyoQVQ5jyaVvfxYUXg4jATJ3buebfL08/embed?start=false&loop=false&delayms=3000&rm=minimal"
     allowfullscreen
     allow="autoplay; fullscreen"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
   ></iframe>
 
   <!-- ✅ Minimized Floating Chat -->
@@ -178,6 +179,25 @@
     });
 
     chatContainer.addEventListener('touchend', () => isDragging = false);
+
+    // Mobile-specific slides loading fix
+    const slidesIframe = document.getElementById('slides');
+    
+    // Force reload on mobile if iframe fails to load
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      slidesIframe.addEventListener('load', function() {
+        // Check if iframe loaded properly
+        try {
+          if (slidesIframe.contentWindow.location.href.includes('accounts.google.com')) {
+            // If redirected to Google login, try alternative URL
+            slidesIframe.src = 'https://docs.google.com/presentation/d/1N69UQbYEOPbzyoQVQ5jyaVvfxYUXg4jATJ3buebfL08/preview';
+          }
+        } catch (e) {
+          // Cross-origin error, try alternative URL
+          slidesIframe.src = 'https://docs.google.com/presentation/d/1N69UQbYEOPbzyoQVQ5jyaVvfxYUXg4jATJ3buebfL08/preview';
+        }
+      });
+    }
   </script>
 </body>
 </html>
