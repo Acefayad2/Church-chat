@@ -25,6 +25,18 @@
       background: #000;
       border: none;
       outline: none;
+      -webkit-overflow-scrolling: touch;
+      overflow: hidden;
+    }
+
+    /* Mobile-specific improvements */
+    @media (max-width: 768px) {
+      #slides {
+        width: 100vw;
+        height: 88vh;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+      }
     }
 
     /* ✅ Fullscreen slides */
@@ -96,7 +108,7 @@
   <!-- ✅ Fullscreen Slides (with correct background rendering) -->
   <iframe
     id="slides"
-    src="https://docs.google.com/presentation/d/1N69UQbYEOPbzyoQVQ5jyaVvfxYUXg4jATJ3buebfL08/embed?start=true&loop=true&delayms=10000&rm=minimal"
+    src="https://docs.google.com/presentation/d/1N69UQbYEOPbzyoQVQ5jyaVvfxYUXg4jATJ3buebfL08/preview"
     allowfullscreen
     allow="autoplay; fullscreen"
   ></iframe>
