@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Church Slides + Live Chat</title>
   <style>
     body {
@@ -13,12 +14,20 @@
 
     iframe {
       border: none;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+      filter: none;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      will-change: transform;
     }
 
     /* Improve text rendering for slides */
     #slides {
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
+      image-rendering: pixelated;
       text-rendering: optimizeLegibility;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -27,6 +36,10 @@
       outline: none;
       -webkit-overflow-scrolling: touch;
       overflow: hidden;
+      filter: none;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      perspective: 1000px;
     }
 
 
@@ -42,9 +55,18 @@
       background: #000;
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
+      image-rendering: pixelated;
       text-rendering: optimizeLegibility;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      filter: none;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      perspective: 1000px;
+      will-change: transform;
+      -webkit-transform: translateZ(0);
+      -moz-transform: translateZ(0);
+      -ms-transform: translateZ(0);
     }
 
     /* ✅ Chat bar at the bottom */
@@ -100,7 +122,7 @@
   <!-- ✅ Fullscreen Slides (with correct background rendering) -->
   <iframe
     id="slides"
-    src="https://docs.google.com/presentation/d/1RaSGhmWmmvbQhHMbkIgzP2V9ZzqAykPukUqSLNpEcbc/embed?start=false&loop=false"
+    src="https://docs.google.com/presentation/d/16FmXAzCV06kcoCMeL_W77YAXL3v4rb38bxgXcFUcv6E/embed?start=false&loop=false"
     allowfullscreen
   ></iframe>
 
