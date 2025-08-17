@@ -84,7 +84,7 @@
       top: 0;
       left: 0;
       width: 100vw;
-      height: 100vh; /* full screen for projector */
+      height: 90vh; /* leave minimal space for chat bar */
       z-index: 1;
       background: #000;
       image-rendering: -webkit-optimize-contrast;
@@ -113,21 +113,23 @@
       font-smooth: never;
     }
 
-    /* ✅ Chat bar at the bottom - positioned for full-screen slides */
+    /* ✅ Chat bar at the bottom - minimal height to not block slides */
     #chat-container {
       position: fixed;
-      bottom: 10px;
-      right: 10px;
-      width: 300px;
-      height: 200px;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80vw;
+      height: 10vh; /* minimal height to not block slides */
       z-index: 3;
       background: rgba(0, 0, 0, 0.8);
-      border-radius: 8px;
+      border-radius: 8px 8px 0 0;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
       overflow: hidden;
       cursor: move;
       pointer-events: none;
       border: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: none;
     }
 
     #chat-container iframe {
