@@ -28,6 +28,32 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
+    /* Fullscreen optimizations */
+    html:fullscreen {
+      background: #000;
+    }
+
+    html:-webkit-full-screen {
+      background: #000;
+    }
+
+    html:-ms-fullscreen {
+      background: #000;
+    }
+
+    /* Hide browser UI elements in fullscreen */
+    html:fullscreen body {
+      background: #000;
+    }
+
+    html:-webkit-full-screen body {
+      background: #000;
+    }
+
+    html:-ms-fullscreen body {
+      background: #000;
+    }
+
     iframe {
       border: none;
       margin: 0;
@@ -148,10 +174,9 @@
       display: none;
     }
 
-    #toggleBtn {
+    #toggleBtn, #fullscreenBtn {
       position: fixed;
       top: 10px;
-      left: 10px;
       z-index: 4;
       background: rgba(0,0,0,0.7);
       color: white;
@@ -159,11 +184,26 @@
       padding: 10px 15px;
       font-size: 16px;
       border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #toggleBtn {
+      left: 10px;
+    }
+
+    #fullscreenBtn {
+      left: 120px;
+    }
+
+    #toggleBtn:hover, #fullscreenBtn:hover {
+      background: rgba(0,0,0,0.9);
     }
   </style>
 </head>
 <body>
   <button id="toggleBtn">Show Video</button>
+  <button id="fullscreenBtn">Fullscreen</button>
 
   <!-- ✅ Fullscreen Slides (with correct background rendering) -->
   <iframe
@@ -192,6 +232,7 @@
 
   <script>
     const toggleBtn = document.getElementById('toggleBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
     const slides = document.getElementById('slides');
     const player = document.getElementById('player');
     const chatContainer = document.getElementById('chat-container');
@@ -202,6 +243,44 @@
       slides.style.zIndex = showingVideo ? 1 : 0;
       toggleBtn.textContent = showingVideo ? 'Show Video' : 'Show Slides';
     };
+
+    // Fullscreen functionality
+    fullscreenBtn.onclick = () => {
+      if (!document.fullscreenElement) {
+        // Enter fullscreen
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        }
+        fullscreenBtn.textContent = 'Exit Fullscreen';
+      } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+        fullscreenBtn.textContent = 'Fullscreen';
+      }
+    };
+
+    // Listen for fullscreen changes
+    document.addEventListener('fullscreenchange', updateFullscreenButton);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+    document.addEventListener('msfullscreenchange', updateFullscreenButton);
+
+    function updateFullscreenButton() {
+      if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+        fullscreenBtn.textContent = 'Exit Fullscreen';
+      } else {
+        fullscreenBtn.textContent = 'Fullscreen';
+      }
+    }
 
     // Chat drag support
     let isDragging = false, offsetX = 0, offsetY = 0;
