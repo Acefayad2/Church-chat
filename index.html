@@ -8,26 +8,53 @@
   <style>
     body {
       margin: 0;
+      padding: 0;
       background: #000;
       overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     iframe {
       border: none;
+      margin: 0;
+      padding: 0;
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
       image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
       filter: none;
       transform: translateZ(0);
       backface-visibility: hidden;
       will-change: transform;
+      outline: none;
+      box-sizing: border-box;
+      zoom: 1;
+      -webkit-zoom: 1;
+      -moz-zoom: 1;
+      -webkit-font-smoothing: subpixel-antialiased;
+      font-smooth: never;
     }
 
-    /* Improve text rendering for slides */
+    /* Improve text rendering for slides - enhanced for crisp display */
     #slides {
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
       image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
       text-rendering: optimizeLegibility;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -40,22 +67,30 @@
       transform: translateZ(0);
       backface-visibility: hidden;
       perspective: 1000px;
+      -webkit-transform: translateZ(0);
+      -moz-transform: translateZ(0);
+      -ms-transform: translateZ(0);
+      will-change: transform;
+      zoom: 1;
+      -webkit-zoom: 1;
+      -moz-zoom: 1;
     }
 
 
 
-    /* ✅ Fullscreen slides */
+    /* ✅ Fullscreen slides - maximized for projector with crisp rendering */
     #slides {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
-      height: 88vh; /* leave space for chat */
+      height: 100vh; /* full screen for projector */
       z-index: 1;
       background: #000;
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
       image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
       text-rendering: optimizeLegibility;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -67,23 +102,32 @@
       -webkit-transform: translateZ(0);
       -moz-transform: translateZ(0);
       -ms-transform: translateZ(0);
+      margin: 0;
+      padding: 0;
+      border: none;
+      outline: none;
+      zoom: 1;
+      -webkit-zoom: 1;
+      -moz-zoom: 1;
+      -webkit-font-smoothing: subpixel-antialiased;
+      font-smooth: never;
     }
 
-    /* ✅ Chat bar at the bottom */
+    /* ✅ Chat bar at the bottom - positioned for full-screen slides */
     #chat-container {
       position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80vw;
-      height: 12vh;
+      bottom: 10px;
+      right: 10px;
+      width: 300px;
+      height: 200px;
       z-index: 3;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.8);
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
       overflow: hidden;
       cursor: move;
       pointer-events: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     #chat-container iframe {
