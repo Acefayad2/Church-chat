@@ -104,13 +104,13 @@
 
 
 
-    /* ✅ Fullscreen slides - maximized for projector with crisp rendering */
+    /* ✅ Fullscreen slides - 80% width on the right side */
     #slides {
       position: fixed;
       top: 0;
-      left: 0;
-      width: 100vw;
-      height: 90vh; /* leave minimal space for chat bar */
+      right: 0;
+      width: 80vw;
+      height: 100vh;
       z-index: 1;
       background: #000;
       image-rendering: -webkit-optimize-contrast;
@@ -139,23 +139,20 @@
       font-smooth: never;
     }
 
-    /* ✅ Chat bar at the bottom - minimal height to not block slides */
+    /* ✅ Chat container - 20% width on the left side */
     #chat-container {
       position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80vw;
-      height: 10vh; /* minimal height to not block slides */
+      top: 0;
+      left: 0;
+      width: 20vw;
+      height: 100vh;
       z-index: 3;
-      background: rgba(0, 0, 0, 0.8);
-      border-radius: 8px 8px 0 0;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.9);
+      border-right: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.8);
       overflow: hidden;
-      cursor: move;
-      pointer-events: none;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-bottom: none;
+      border-radius: 0;
+      pointer-events: auto;
     }
 
     #chat-container iframe {
@@ -167,8 +164,8 @@
     #player {
       position: fixed;
       top: 0;
-      left: 0;
-      width: 100vw;
+      right: 0;
+      width: 80vw;
       height: 100vh;
       z-index: 0;
       display: none;
@@ -315,40 +312,7 @@
       }
     }
 
-    // Chat drag support
-    let isDragging = false, offsetX = 0, offsetY = 0;
-
-    chatContainer.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      offsetX = e.clientX - chatContainer.offsetLeft;
-      offsetY = e.clientY - chatContainer.offsetTop;
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        chatContainer.style.left = `${e.clientX - offsetX}px`;
-        chatContainer.style.top = `${e.clientY - offsetY}px`;
-      }
-    });
-
-    document.addEventListener('mouseup', () => isDragging = false);
-
-    chatContainer.addEventListener('touchstart', (e) => {
-      isDragging = true;
-      const touch = e.touches[0];
-      offsetX = touch.clientX - chatContainer.offsetLeft;
-      offsetY = touch.clientY - chatContainer.offsetTop;
-    });
-
-    chatContainer.addEventListener('touchmove', (e) => {
-      if (isDragging) {
-        const touch = e.touches[0];
-        chatContainer.style.left = `${touch.clientX - offsetX}px`;
-        chatContainer.style.top = `${touch.clientY - offsetY}px`;
-      }
-    });
-
-    chatContainer.addEventListener('touchend', () => isDragging = false);
+    // Chat is now fixed position - no drag functionality needed
   </script>
 </body>
 </html>
