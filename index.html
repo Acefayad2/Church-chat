@@ -73,6 +73,8 @@
       -moz-zoom: 1;
       -webkit-font-smoothing: subpixel-antialiased;
       font-smooth: never;
+      background: #000;
+      display: block;
     }
 
     /* Improve text rendering for slides - enhanced for crisp display */
@@ -104,11 +106,11 @@
 
 
 
-    /* ✅ Fullscreen slides - 80% width on the right side */
+    /* ✅ Fullscreen slides - 80% width on the left side, no gaps */
     #slides {
       position: fixed;
       top: 0;
-      right: 0;
+      left: 0;
       width: 80vw;
       height: 100vh;
       z-index: 1;
@@ -137,19 +139,21 @@
       -moz-zoom: 1;
       -webkit-font-smoothing: subpixel-antialiased;
       font-smooth: never;
+      object-fit: cover;
+      object-position: center;
     }
 
-    /* ✅ Chat container - 20% width on the left side */
+    /* ✅ Chat container - 20% width on the right side */
     #chat-container {
       position: fixed;
       top: 0;
-      left: 0;
+      right: 0;
       width: 20vw;
       height: 100vh;
       z-index: 3;
       background: rgba(0, 0, 0, 0.9);
-      border-right: 2px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.8);
+      border-left: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: -2px 0 20px rgba(0, 0, 0, 0.8);
       overflow: hidden;
       border-radius: 0;
       pointer-events: auto;
@@ -224,14 +228,15 @@
   <!-- ✅ Fullscreen Slides (with correct background rendering) -->
   <iframe
     id="slides"
-    src="https://docs.google.com/presentation/d/1DtVgxYLknP_jBvEcmmlW0yCrn2u8TTceNMBQh__0kL8/embed?start=false&loop=false"
+    src="https://docs.google.com/presentation/d/1DtVgxYLknP_jBvEcmmlW0yCrn2u8TTceNMBQh__0kL8/embed?start=false&loop=false&rm=minimal"
     allowfullscreen
+    frameborder="0"
   ></iframe>
 
   <!-- ✅ Minimized Floating Chat -->
   <div id="chat-container">
     <iframe
-      src="https://chat.restream.io/embed?token=9b5dccab-d81c-457a-8801-47adc7673892"
+      src="https://chat.restream.io/embed?token=9b5dccab-d81c-457a-8801-47adc7673892&theme=dark&autoScroll=true&showTimestamp=true"
       allowfullscreen
     ></iframe>
   </div>
