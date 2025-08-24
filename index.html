@@ -185,7 +185,21 @@
       font-size: 16px;
       border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Hide buttons in fullscreen mode */
+    html:fullscreen #toggleBtn,
+    html:fullscreen #fullscreenBtn,
+    html:-webkit-full-screen #toggleBtn,
+    html:-webkit-full-screen #fullscreenBtn,
+    html:-ms-fullscreen #toggleBtn,
+    html:-ms-fullscreen #fullscreenBtn {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
 
     #toggleBtn {
@@ -199,6 +213,11 @@
     #toggleBtn:hover, #fullscreenBtn:hover {
       background: rgba(0,0,0,0.9);
     }
+
+    /* Smooth fade transitions for buttons */
+    #toggleBtn, #fullscreenBtn {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   </style>
 </head>
 <body>
@@ -208,7 +227,7 @@
   <!-- ✅ Fullscreen Slides (with correct background rendering) -->
   <iframe
     id="slides"
-    src="https://docs.google.com/presentation/d/16FmXAzCV06kcoCMeL_W77YAXL3v4rb38bxgXcFUcv6E/embed?start=false&loop=false"
+    src="https://docs.google.com/presentation/d/1DtVgxYLknP_jBvEcmmlW0yCrn2u8TTceNMBQh__0kL8/embed?start=false&loop=false"
     allowfullscreen
   ></iframe>
 
@@ -277,8 +296,22 @@
     function updateFullscreenButton() {
       if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
         fullscreenBtn.textContent = 'Exit Fullscreen';
+        // Hide buttons smoothly in fullscreen
+        toggleBtn.style.opacity = '0';
+        toggleBtn.style.visibility = 'hidden';
+        toggleBtn.style.pointerEvents = 'none';
+        fullscreenBtn.style.opacity = '0';
+        fullscreenBtn.style.visibility = 'hidden';
+        fullscreenBtn.style.pointerEvents = 'none';
       } else {
         fullscreenBtn.textContent = 'Fullscreen';
+        // Show buttons when exiting fullscreen
+        toggleBtn.style.opacity = '1';
+        toggleBtn.style.visibility = 'visible';
+        toggleBtn.style.pointerEvents = 'auto';
+        fullscreenBtn.style.opacity = '1';
+        fullscreenBtn.style.visibility = 'visible';
+        fullscreenBtn.style.pointerEvents = 'auto';
       }
     }
 
