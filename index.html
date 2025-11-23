@@ -99,12 +99,12 @@
 
 
 
-    /* ✅ Fullscreen slides - 80% width on the left side, no gaps */
+    /* ✅ Fullscreen slides - 100% width */
     #slides {
       position: fixed;
       top: 0;
       left: 0;
-      width: 80vw;
+      width: 100vw;
       height: 100vh;
       z-index: 1;
       background: transparent;
@@ -134,33 +134,96 @@
       object-position: center;
     }
 
-    /* ✅ Chat container - 20% width on the right side */
+    /* Small chat iframe for fetching messages - positioned off-screen but accessible */
     #chat-container {
       position: fixed;
       top: 0;
-      right: 0;
-      width: 20vw;
-      height: 100vh;
-      z-index: 3;
-      background: rgba(0, 0, 0, 0.7);
-      border-left: 2px solid rgba(255, 255, 255, 0.3);
-      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
-      overflow: hidden;
-      border-radius: 0;
+      right: -400px; /* Off-screen but accessible for monitoring */
+      width: 400px;
+      height: 600px;
+      z-index: 5;
+      opacity: 0.01; /* Nearly invisible but still accessible */
       pointer-events: auto;
+      overflow: hidden;
+      border: none;
     }
 
     #chat-container iframe {
       width: 100%;
       height: 100%;
+      border: none;
+    }
+
+    /* Chat bubbles container - positioned in safe area (bottom right) */
+    #chat-bubbles {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 350px;
+      max-width: calc(100vw - 40px);
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .chat-bubble {
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 18px;
+      max-width: 100%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      animation: slideInRight 0.3s ease-out, fadeOut 0.5s ease-in 4.5s;
+      opacity: 1;
       pointer-events: auto;
+      word-wrap: break-word;
+      line-height: 1.4;
+      font-size: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .chat-bubble .username {
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .chat-bubble .message {
+      color: #ffffff;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(20px);
+      }
     }
 
     #player {
       position: fixed;
       top: 0;
-      right: 0;
-      width: 80vw;
+      left: 0;
+      width: 100vw;
       height: 100vh;
       z-index: 0;
       display: none;
@@ -241,9 +304,9 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 80vw;
+      width: 100vw;
       height: 100vh;
-      z-index: 2; /* Above slides (1), below chat (3) and buttons (4) */
+      z-index: 2; /* Above slides (1), below chat bubbles (10) and buttons (4) */
       display: none;
       background: #000; /* fallback behind the embed */
     }
@@ -268,18 +331,22 @@
   <!-- ✅ Fullscreen Slides (with correct background rendering) -->
   <iframe
     id="slides"
-    src="https://docs.google.com/presentation/d/10f2pcUw4_A3SSAFptMsIFV8-yLO5uK2mD0DhSSaTt-M/embed?start=false&loop=false&rm=minimal&delayms=3000"
+    src="https://docs.google.com/presentation/d/1VjNXA3nMZwwgnv8U0TyisCrnHZHhFz5erGTH00_gn3o/embed?start=false&loop=false&rm=minimal&delayms=3000"
     allowfullscreen
     frameborder="0"
   ></iframe>
 
-  <!-- ✅ Minimized Floating Chat -->
+  <!-- Hidden chat iframe for fetching messages -->
   <div id="chat-container">
     <iframe
+      id="chat-iframe"
       src="https://chat.restream.io/embed?token=9b5dccab-d81c-457a-8801-47adc7673892&theme=dark&autoScroll=true&showTimestamp=true"
       allowfullscreen
     ></iframe>
   </div>
+
+  <!-- Chat bubbles container -->
+  <div id="chat-bubbles"></div>
 
   <!-- ✅ Optional Video Feed -->
   <div id="player">
@@ -378,7 +445,187 @@
       }
     }
 
-    // Chat is now fixed position - no drag functionality needed
+    // Chat bubble system
+    const chatBubbles = document.getElementById('chat-bubbles');
+    const chatIframe = document.getElementById('chat-iframe');
+    let processedMessages = new Set();
+    let activeBubbles = [];
+
+    // Function to create and show a chat bubble
+    function showChatBubble(username, message) {
+      // Clean up username and message
+      username = (username || 'Anonymous').trim();
+      message = (message || '').trim();
+      
+      if (!message) return; // Don't show empty messages
+      
+      // Remove any existing bubbles that are fading out if we have too many
+      const existingBubbles = chatBubbles.querySelectorAll('.chat-bubble');
+      if (existingBubbles.length >= 3) {
+        // Limit to 3 bubbles max
+        const oldest = existingBubbles[0];
+        oldest.style.animation = 'fadeOut 0.3s ease-in forwards';
+        setTimeout(() => oldest.remove(), 300);
+      }
+
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble';
+      
+      const usernameEl = document.createElement('div');
+      usernameEl.className = 'username';
+      usernameEl.textContent = username;
+      
+      const messageEl = document.createElement('div');
+      messageEl.className = 'message';
+      messageEl.textContent = message;
+      
+      bubble.appendChild(usernameEl);
+      bubble.appendChild(messageEl);
+      chatBubbles.appendChild(bubble);
+      activeBubbles.push(bubble);
+
+      // Remove bubble after 5 seconds
+      setTimeout(() => {
+        bubble.style.animation = 'fadeOut 0.5s ease-in forwards';
+        setTimeout(() => {
+          bubble.remove();
+          activeBubbles = activeBubbles.filter(b => b !== bubble);
+        }, 500);
+      }, 5000);
+    }
+
+    // Listen for messages from the chat iframe (if it supports postMessage)
+    window.addEventListener('message', (event) => {
+      // Verify origin for security
+      if (event.origin.includes('restream.io')) {
+        if (event.data) {
+          // Handle different message formats
+          let username, message;
+          
+          if (event.data.type === 'chat-message') {
+            username = event.data.username;
+            message = event.data.message;
+          } else if (event.data.username && event.data.text) {
+            username = event.data.username;
+            message = event.data.text;
+          } else if (event.data.user && event.data.message) {
+            username = event.data.user;
+            message = event.data.message;
+          }
+          
+          if (username && message) {
+            const messageKey = `${username}:${message}:${Date.now()}`;
+            if (!processedMessages.has(messageKey)) {
+              processedMessages.add(messageKey);
+              showChatBubble(username, message);
+              
+              // Clean up old message keys (keep last 100)
+              if (processedMessages.size > 100) {
+                const keysArray = Array.from(processedMessages);
+                processedMessages = new Set(keysArray.slice(-50));
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // Try to extract messages from iframe using MutationObserver
+    // This works if the iframe is same-origin or if CORS allows it
+    function setupChatMonitoring() {
+      try {
+        const iframeWindow = chatIframe.contentWindow;
+        const iframeDoc = iframeWindow?.document;
+        
+        if (!iframeDoc) {
+          // Iframe not loaded yet, try again
+          setTimeout(setupChatMonitoring, 1000);
+          return;
+        }
+
+        // Try to find chat message container
+        const chatContainer = iframeDoc.querySelector('[class*="chat"], [class*="message"], [id*="chat"], [id*="message"]') ||
+                             iframeDoc.body;
+
+        if (chatContainer) {
+          // Use MutationObserver to watch for new messages
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+              mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1) { // Element node
+                  // Try to extract message data
+                  const usernameEl = node.querySelector('[class*="user"], [class*="author"], [class*="name"]') ||
+                                   node.querySelector('[data-username]') ||
+                                   node;
+                  const messageEl = node.querySelector('[class*="text"], [class*="content"], [class*="message"]') ||
+                                  node.querySelector('[data-message]') ||
+                                  node;
+
+                  const username = usernameEl?.getAttribute('data-username') || 
+                                 usernameEl?.textContent?.split(':')[0]?.trim() || 
+                                 'User';
+                  const message = messageEl?.getAttribute('data-message') || 
+                                messageEl?.textContent?.trim() || 
+                                '';
+
+                  // Check if this looks like a chat message
+                  if (message && message.length > 0 && message.length < 500) {
+                    const messageKey = `${username}:${message}`;
+                    if (!processedMessages.has(messageKey)) {
+                      processedMessages.add(messageKey);
+                      showChatBubble(username, message);
+                    }
+                  }
+                }
+              });
+            });
+          });
+
+          observer.observe(chatContainer, {
+            childList: true,
+            subtree: true,
+            characterData: true
+          });
+        }
+      } catch (e) {
+        // CORS error - iframe is cross-origin, can't access content directly
+        // Fall back to polling or API method
+        console.log('Cannot access iframe content directly (CORS restriction). Using alternative methods.');
+      }
+    }
+
+    // Start monitoring when iframe loads
+    chatIframe.addEventListener('load', () => {
+      setTimeout(setupChatMonitoring, 2000); // Wait for chat to initialize
+    });
+
+    // Also try immediately in case iframe is already loaded
+    if (chatIframe.contentDocument?.readyState === 'complete') {
+      setTimeout(setupChatMonitoring, 1000);
+    }
+
+    // Fallback: Poll for messages using Restream API (if you have API access)
+    // Uncomment and configure if you have Restream API credentials
+    /*
+    async function fetchRestreamMessages() {
+      try {
+        const response = await fetch('https://api.restream.io/v1/chat/messages?token=YOUR_TOKEN');
+        const data = await response.json();
+        if (data.messages) {
+          data.messages.forEach(msg => {
+            const messageKey = `${msg.username}:${msg.message}`;
+            if (!processedMessages.has(messageKey)) {
+              processedMessages.add(messageKey);
+              showChatBubble(msg.username, msg.message);
+            }
+          });
+        }
+      } catch (error) {
+        console.log('Restream API not available');
+      }
+    }
+    // setInterval(fetchRestreamMessages, 3000); // Poll every 3 seconds
+    */
   </script>
 </body>
 </html>
