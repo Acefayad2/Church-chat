@@ -229,7 +229,7 @@
       display: none;
     }
 
-    #toggleBtn, #fullscreenBtn, #pollBtn {
+    #toggleBtn, #fullscreenBtn {
       position: fixed;
       top: 10px;
       z-index: 4;
@@ -241,20 +241,26 @@
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Show buttons on hover */
+    body:hover #toggleBtn,
+    body:hover #fullscreenBtn {
       opacity: 1;
       visibility: visible;
+      pointer-events: auto;
     }
 
     /* Hide buttons in fullscreen mode */
     html:fullscreen #toggleBtn,
     html:fullscreen #fullscreenBtn,
-    html:fullscreen #pollBtn,
     html:-webkit-full-screen #toggleBtn,
     html:-webkit-full-screen #fullscreenBtn,
-    html:-webkit-full-screen #pollBtn,
     html:-ms-fullscreen #toggleBtn,
-    html:-ms-fullscreen #fullscreenBtn,
-    html:-ms-fullscreen #pollBtn {
+    html:-ms-fullscreen #fullscreenBtn {
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -268,16 +274,12 @@
       left: 120px;
     }
 
-    #pollBtn {
-      left: 250px;
-    }
-
-    #toggleBtn:hover, #fullscreenBtn:hover, #pollBtn:hover {
+    #toggleBtn:hover, #fullscreenBtn:hover {
       background: rgba(0,0,0,1);
     }
 
     /* Smooth fade transitions for buttons */
-    #toggleBtn, #fullscreenBtn, #pollBtn {
+    #toggleBtn, #fullscreenBtn {
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -326,7 +328,6 @@
 <body>
   <button id="toggleBtn">Show Video</button>
   <button id="fullscreenBtn">Fullscreen</button>
-  <button id="pollBtn">Show Poll</button>
 
   <!-- ✅ Fullscreen Slides (with correct background rendering) -->
   <iframe
@@ -373,21 +374,12 @@
     const slides = document.getElementById('slides');
     const player = document.getElementById('player');
     const chatContainer = document.getElementById('chat-container');
-    const pollBtn = document.getElementById('pollBtn');
-    const pollOverlay = document.getElementById('poll-overlay');
 
     toggleBtn.onclick = () => {
       const showingVideo = player.style.display === 'block';
       player.style.display = showingVideo ? 'none' : 'block';
       slides.style.zIndex = showingVideo ? 1 : 0;
       toggleBtn.textContent = showingVideo ? 'Show Video' : 'Show Slides';
-    };
-
-    // Toggle Mentimeter poll overlay
-    pollBtn.onclick = () => {
-      const showingPoll = pollOverlay.style.display === 'block';
-      pollOverlay.style.display = showingPoll ? 'none' : 'block';
-      pollBtn.textContent = showingPoll ? 'Show Poll' : 'Hide Poll';
     };
 
     // Fullscreen functionality
@@ -439,9 +431,6 @@
         fullscreenBtn.style.opacity = '1';
         fullscreenBtn.style.visibility = 'visible';
         fullscreenBtn.style.pointerEvents = 'auto';
-        pollBtn.style.opacity = '1';
-        pollBtn.style.visibility = 'visible';
-        pollBtn.style.pointerEvents = 'auto';
       }
     }
 
